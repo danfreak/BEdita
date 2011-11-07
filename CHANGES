@@ -1,0 +1,768 @@
+Version 3.1.4 - ulmus
+ User-visible changes:
+	* geotag tab: lookat zoom and type in view
+	* geotag tab: added map type and map zoom in gmaps preview
+	* geotag tab: added streetview
+	* Fix upload media from blip.tv due to video url changed
+	* fill the blanks with html5 attr placeholder
+	* INSTALL readme file update
+	* #288 - fix category filter + fix search persistent filter
+	* fix "slug" notice/warning
+
+
+ Frontend changes:
+	* html sitemap ul li nesting fixed
+	* #210 - loadSectionsTree, on loading contents recalculate "canonicalPath"
+	* frontend_controller: remove title from order in full text search . Use default "points" instead
+	* throw 404 error in FrontendController::loadSectionsTree() when parent_id/nickname doesn't exist
+	* FrontendController::logged attribute is now protected
+	* FrontendController: fix canonicalPath/parentAuthorized object cache
+	* #281 - if section is virtual/hidden call setCanonicalPath
+	* hash jobs: handle mail notification failure, fix signature in mail notification
+	* fix lang autodetect - lang in "frontendLangsMap" should also be in "frontendLangs", otherwise use default "frontendLang". Cookie lang should be in "frontendLangs"
+	* FrontendController::objectCache system improved. Now cached objects are used only if their bindings contain more data or equal than those of the request
+	* moved default BEdita objects modelBindings from app/config/frontend.ini.php to model files
+
+ Developer-visibile changes:
+	* be_thumb helper - do not die on error
+	* addshorttext to document view, now depend on config var presence in bedita.cfg
+	* BeHash component refactoring
+	* geotag tab: add zoom and map type. Saved as json in gmaps_lookat field
+	* hash jobs: fix transactions in FrontendController/BeHashComponent
+	* BeHash component: moved trim($data['title']) in newsetter subscription method, $redirectPath removed
+	* add comment to BeConfigure::loadPluginLocalConfig method
+	* #283 first basic import via shell (ulmus) - load XML exported from frontend section
+	* fix simple objects save - avoid id overwrite
+	* core: "swf", "webroot" reserved words
+	* #289 date input parsing method BeLib::sqlDateFormat
+		- use 01/01 if only year selected
+		- year with 1/2 numbers, consider 1900 if in the future, otherwise 2000, examples: 09 ==> 2009, 14 ==> 1914
+		- BeLib test case 
+	* #290 - add exception with $data detail
+
+
+
+Version 3.1.3 - ulmus
+ User-visible changes:
+	* newsletter: images and videos content added properly to newsletter messages
+	* notify: avoid editor note notifications for users without backend authorization
+	* tags: filter tags on section (only tags in objects inside a section)
+	* tags: get label from tag unique name
+	* geotag tab: find, fill and test GeoCoords with GoogleMapsGeocoder
+	* multimedia: filtering on tree BuildFilter::mediatypeFilter() found objects twice. Fixed
+	* multimedia: spreadsheet | specific view->element for BODY fields
+	* multimedia: added note element
+	* multimedia: file detail - fix: not show "imageinfo" if not present
+	* multimedia: fix remote images display (height/width) in "Multimedia items"
+	* fix chrome multimediaitem drag & drop + advanced modal ajax infos on multimediaitems
+	* translation - images - replaced 'url' with 'uri'
+	* fix: remove "notice" in tag save, $name not initialized, defined in beforeValidate
+	* #273 - Translations module: fix wrong limit clasuole in query
+
+
+ Frontend changes:
+	* added georss reachable from /georss/section-nickname (simple and atom)
+	* added kml  reachable from /kml/section-nickname 
+	* BeFront::breadcrumb() now accepts an array of options
+	* minor bug in rss feed creation (notice error when empty abstract and body)
+	* fix wrong canonicalPath in currentContent
+	* BeFront helper: fix canonicalPath() method
+	* fix generic exception error message
+	* 404 error if url is a reserved word and no handler is found (e.g. /js/.., /css/... )
+	* newsletter subscribe: fix Card.title value if Card.surname exists
+	* #210 - partial menu implementation - if tree.menu == 0 for a section, exclude it from "canonicalPath"
+	* #210 -beFront, breadcrumb - hide hidden sections (trees.menu == 0) 
+	* #210 - menu, new canonicalPath method, rule to select preferred canonical path for every object (mutlifiling)
+	* BeEmbedMedia helper - in mode=thumb generate alt with title object if no one is passed
+	* #270 - add callback methods convention to fetch custom rss channel and items not from a single section 
+	* #100 - strip <scripts> tag saving comments or generic object to avoid xss attack
+	* #274 category frontend method (like /tag)
+	* #104 cache: simple object cache array to avoid duplicate object load
+	* added Tree.area_id condition in FrontendController::setCanonicalPath() to get right path when there is more than one publication
+	* #210 - menu, use canonicalPath method in "virtual" section objects (trees.menu === '0')
+	* fix RSS feeds channel data
+	* #210 - sitemap - add "menu" info, fix html sitemap <ul><li> tags, remove hidden/virtual sections from sitemap.xml
+
+
+ Developer-visibile changes:
+	* model: streams, fix mime type detection for PHP 5.3
+	* shell: load cached config in startup, initConfig method
+	* bedita shell script: avoid cached config use in init, initDb, import methods
+	* cake php bug-fix, xml to array conversion
+	* remove users.userid from buildFilterBehavior::object_userFilter() - it got performance problems with large numbers of objects
+	* finfo_open() in Stream::getMimeType() useFILEINFO_MIME_TYPE instead of FILEINFO_MIME to intercept only the mime_type
+	* errors: add $_GET['url'] param in error 500 log
+	* update BeBlip component to fit changes in blip.tv api
+	* bugfix: construction of categories.name for multimedia objects was wrong
+	* shell: dbadmin::updateCategoryName accept -objectType <object-type-name> as parameter
+	* bugfix: auth_param field serialization only in case of array data
+	* User::afterFind() check if auth_params field is unserializable and if it is unserialize it
+	* XML::toArray patch http://cakephp.lighthouseapp.com/projects/42648/tickets/1667
+	* config/local default dir for local config files - svn ignore
+	* BEDITA_LOCAL_CFG_PATH, local configuration files path - not versioned
+	* soap: debug messages improvements, use "debugMode" to activate request/response log in debug.log
+	* shell:  #224 - addressbook import - set mailgroup, use custom csv file [header may contain BE fields]
+	* Blip Helper: calculate width or height respect original video ratio if only one parameter is defined
+	* tinyMce target="modal" setup in default config
+	* #272 - BEAppModel::findObjects(): changed "group by" clausole on Tree to avoid duplicated items
+	* media nickname input value in itembox
+	* nickname input value in see also list
+	* #274 - "category" reserved word
+	* postgres: fix query to get user to notificate, improved Postgres support
+	* BEAppModel::findObjects() - splitted Tree 'group by' for mysql and postgres to work properly in mysql. Actually Postgres return double results in some cases
+
+
+
+
+Version 3.1.2 - ulmus
+ User-visible changes:
+	* Publications module: default limit listed content to one hundred items
+	* newsletter: list detail, fixed errors in config messages tab
+	* #267 bugfix: avoided recursion on tree when trying to insert section inside itself. Added some unit test on tree
+	* ui: update object user filter on object list - display user name
+	* BeToolbar helper: correct some buggy regexp
+
+
+ Frontend changes:
+	* Added new object permissions for partial frontend access
+	* Refactoring FrontendController to handle new frontend permission
+	* bugfix: when publication status is draft and $config["draft"]=true, off objects were shown
+	* #260 - refactoring of Category::getTags($options) method. Now accept an array of parameters. Added filter by publication to see only tags used in a frontend app
+	* add moderated user signup with administrator's email as an option
+	* correct wrong <input type=email> with <input type=text> for name field in signup <form>
+	* #260 - FrontendController::tag() method get only objects from current frontend publication
+	* limit the number of elements in auto-generated RSS feeds (now 50 hard coded)
+	* htmlentities for rss items' titles
+	* security bugfix: frontend signup groups limited to frontend groups except if they are defined in frontend.ini.php authorizedGroups
+
+
+ Developer-visibile changes:
+	* Object permissions managed through configuration array instead of constants
+	* shell: dbadmin cleanup -days / removes old items from log/job tables
+	* check sql format with regexp instead of DateTime class for work correctly in PHP 5.2
+	* #261 - generate category and tag names like object nickname for friendly url
+	* patched mysql schema (remove enum and set)
+	* minor fix on unit test
+	* remove duplicated Module model
+	* shell: bedita modules fix/update
+	* permission flow in FrontendController::loadObj() revisited
+	* shell: bedita checkApp - check mediaRoot/mediaUrl/beditaUrl params presence
+	* card: fix merge/import from vcard file, avoid duplicates
+	* shell: add dbadmin::updateCategoryName() method to update categories and tags unique name as friendly url string
+	* Category/Tag unique name: add meditaTypes category as reserved words for categories
+	* fix model paths list order for plugins
+	* bugfix: unit test use "test" datasource from database.php
+	* core: reserved words update
+	* more clear and simple 404/500 error log
+	* remove bad js link - jquery/jquery.treeview.js
+	* error/log messages improvement
+	* shell: method to read arguments from ini file
+	* simple html dom library
+	* fix default $config mediaRoot/mediaUrl
+	* shell: check all frontends in checkApp / check frontends existence
+	* errors: add GET/POST data in log msg
+	* webservice - fixed wrong use of SoapClient PHP class in SoapClientModel
+	* fix wrong custom query for postreSQL in BuildFilter::object_userFilter() method
+	* remove unset Content array in BEAppModel::findObjects method
+	* postgres support: fixed wrong use of LIMIT clausole in BEAppModel::findObjects()
+	* update to CakePHP 1.2.10
+
+
+
+Version 3.1.1 - ulmus
+ User-visible changes:
+	* added "create new object" button in publications module (tab content)
+	* #259 addressbook: newsletter subscription bug when a multiple newsletter list subscription is performed
+	* syntax correction in notify messages: default.msg.php
+	* fixed javascript error when no concurrent users are present
+	* newsletter: tinyMCE broken in template view. 'bedita' tinyMCE plugin for newsletter template restored
+	* locale: updated german (thanks to Nils-Christoph Fiedler)
+	* locale: translations updated
+	* add "title" as order filed in Tree::getAll, now publications are listed order by name
+	* newsletter: added images button in tinyMCE toolbar
+	* newsletter: improve performance in view mail groups
+
+
+ Frontend changes:
+	* notification improvement: changes in frontend apps show frontend url insetad of backend url
+	* merged all notifications messages: default.msg, local.msg and (in frontend) frontend.msg
+	* site.example.com bugfix: wrong variable name was used
+
+
+ Developer-visibile changes:
+	* Notify behavior attached to all BEdita objects
+	* field production_date bugfix (model Product)
+	* wqphpThumb class, solved wrong size calculation when using imagemagick (mode crop, "zoomcrop")
+	* added boolean option in bedita.ini to use or not imagemagick
+	* added method for custom notification and improved placeholder replacement with regexp in  notification messages
+	* added $config["langSystem"] to bedita.cfg to override bedita.ini default
+	* shell: in update function of gettext script added the creation of default.po file if doesn't exist
+	* fixed wrong query in Cateory::getTags() method
+	* BeThumb helper: set to true ignore aspect ratio in crop mode
+	* helper: fix url when get flowplayer.swf
+	* update sql data for upgrade (users.email=NULL WHERE email=''
+	* bedita objects dates aren't formatted if they are already in SQL format
+	* throw exception on wrong date format saving objects
+
+
+Version 3.1 - ulmus
+ User-visible changes:
+	* threaded annotation
+	* dummy.example.com: added base view and elements
+	* #257 - fixed errors on ui.(...).js references
+	* fixed: Modal windows don't work in Chorme/Safari
+	* #256 - Calendar style is broken
+	* fixed: in staging site pages were shown also if log in was wrong
+	* #232 - newsletter: invoice detail view
+	* fixed: publication, not publishing...
+	* fixed: dashboard - css for h2 tabs (expanded)
+	* fixed: "x" button on multimedia box, just uploaded
+	* #255 - newsletter: UI bugs, bulk op. and missing sender
+	* #180 - translations: list order, filter, various fixes
+	* fixed: translation list false href fix
+	* #258 - consistency in bulk operation menu
+	* fixed: now tooltip correctly disappear
+	* fixed: embed blip.tv flv video. Search for flv video if another format is setted as blip main source
+	* blip.tv m4v support
+	* commments option in multimedia form
+	* fixed: translations list - model color box in css missing (short news, files)
+	* custom relations in comments
+	* fixed: on object/view, "(Un)Select all", in "select from archive" panel
+
+
+ Frontend changes:
+	* fixed: favicons (png) examples front
+	* dyanmic html lang="" attribute examples front
+	* examples (dummy and debug): used BeFrontHelper
+	* wp.example - license
+	* wp.example.com: added charset
+	* wp.example.com: search user items
+	* wp.example.com - minor fixes
+	* debug.example.com: added missing .ctp templates
+	* *.example.com: used BeFrontHelper::stats and BeFrontHelper::breadcrumb
+	* bug fix on embed media
+	* added BeFrontHelper::stats() and BeFrontHelper::breadcrumb() methods
+	* fixed: on EmbedFlash helper (modrewrite & no modrewrite url)
+	* comments thread_path saved when populated "thread_parent_id" in frontend view form
+	* dynamic frontend view mapping (via mapping.cfg.php)
+	* add BeFront::chooseTemplate() metod to select template available (file name is choosed following the order: obj_nick, secion_nick, parent_sections_nick, object_type, default template)
+	* fixed: contentPath - canonicalPath for contents on publication root
+	* added sectionOptions ["childrenParams"]["detailed"] => if true details of other section contents are loaded if a specific content is requesteed (default false)
+	* beFront helper: - title - 'contentRequested' inside area
+	* added saveCommentBeforeRender when saveComment method isn't called with ajax
+	* correction in wp.example.com/README.txt
+	* #103 - restore richtext editor text in object versioning
+
+
+ Developer-visibile changes:
+	* xss vulnerability removed from search using Sanitize::html
+	* update to CakePHP 1.2.8
+	* moved default modules and addons folder outside bedita-app. Defined two constants to map paths.
+	* Build route plugin modules connections on the fly. Generic refatcoring on plug/unplug module/addons to use only BEDITA_MODULES_PATH/BEDITA_ADDONS_PATH and not all plugin paths.
+	* Installing module check min and max version of BEdita required
+	* fixed: upload image by url
+	* fixed: deleting old search_texts fields when an item is updated
+	* check obj type existence before purge
+	* addons vendors path added $vendorPaths in bootsrap.php
+	* nusoap library added
+	* basic soap client model
+	* SoapClientModel - soap php module support
+	* schema documentation file
+	* i18n update
+	* modified internal deploy script for release
+	* db schema doc shell functions
+	* fixed: unit tests
+	* db: userid field update
+	* create new object here / bedev to test
+	* Introduced a custom realtion filter control when showing objects in relations tab
+	* added array UserProperty in user session
+	* added ObjectRelation::deleteRelation method
+	* User::compact() check if array Group is empty
+	* BeUploadToObj::params are the Controlller::params (by reference)
+	* css validate label error
+
+
+Version 3.1.RC - ulmus
+ User-visible changes:
+	* backend main container expanded to 1024px, optimal resolution now is 1280x1024
+	* pagination in Publications section
+	* #180 - module Translations: order by translation status (and by BEObject.modified DESC), added object_type filter
+	* #248 fix "Category" filter bug
+	* renamed history to versions
+	* "No items found" - instead of "No {$moduleName} found"
+	* skip duplicate mail notifications
+	* #70 - disable mail notifications on autosave
+	* #255 - viewMailGroup - bulk list operations
+	* #232 - list invoice now contains newsletter already sent too. Added invoice detail with paginated mail jobs. Add filter on mail_jobs.status.
+	* bugfix: right file size uploading file
+
+
+ Frontend changes:
+	* fix missing LangText for stream-type objects
+	* BeFront helper: added menu method to build simple innested unordered list menu from tree
+	* homePage method used to load first active section as home page
+	* frontend examples: home page route rule changed
+	* wordpress default theme sample
+
+
+ Developer-visibile changes:
+	* #103 - helper method and many adjustament to map database fields to module label
+	* #248 [postgres] fix findObjects - not extending Content (e.g. cards)
+	* object relations - extend method to support bidirectional relations
+	* fix bedita cleanup on frontends
+	* bugfix on be_auth
+	* #223 - license types in bedita.ini/cfg
+	* show translation percentage/status in gettext update
+	* i18n update
+	* #255 - addeded javascript validation on email and title fields for newsletter message view, added sender_name fields on db and handle it from be_mail component
+
+
+
+
+Version 3.1.beta - ulmus
+ User-visible changes:
+	* #103 - fix revisions on multiple objects save, curr revision, tot revision number, user data in template
+	* #103 - fix revisions page link - added version info in revision.tpl
+	* #240 - "tree" attribute for objects that should be on tree
+	* #181 - alert on change unsaved pages
+	* #230 - bulk operations on selected objects: no submit when no check is selected, copy / category, section / category
+	* #240 - publish button added when status is 'draft': set 'ON' status object and save
+	* fixed empty object list click
+	* bugfix: user not valid have not to log in
+	* bugfix: clone button (on confirm, pressing "cancel": anyway following submit was clone...)
+	* bug fix: loading non multimedia objects in multimedia module throw exception
+	* #248 fix group module permissions, stats, tags, translations (partial), fix section delete
+	* no more shadow with img background in tabs
+	* saved notify defualt options form configuration when an user is created
+
+ Frontend changes:
+	* frontend bugfix: in bedita.cfg.php define $config = array() only if it's not already setted
+	* fix notification on comment save
+
+
+ Developer-visibile changes:
+	* removed jquery/jquery.treeview.js inclusion
+	* #249 - bad table/column names - dbadmin shell script method
+	* #249 - shell checkDbNames - use schema file or db connection directly (default)
+	* config: portable/working default media root
+	* #238 - shell: rebuildIndex call checkConsistency method if errors occures
+	* #249 - renamed fields that were keywords for some db
+	* #250 - custom properties for users
+	* mail support sent as mail job
+	* upgrade phpthumb to 1.7.9
+	* bug fix: fix json object returned in upload ajax and by url for compatibility with jquery 1.4
+	* #252 - BeSchema db schema handling class
+	* #252 - plugin schema handling: complete plug and unplug (shell script to generete schema files, small fixes), clear cache after module plug/unplug
+	* set primary key  to object_properties.id and user_properties.id
+	* #249 - partial postgres support, export/import available in postgres
+	* permission modules optimization
+	* bugfix: plugin objectTypes configuration was overwrited for any plugin module
+	* add plugin model path to plugin install procedure
+	* #248 unofficial sqlite3 driver, add sequence check to db shell scripts, fix postgres schema - use serial (autoincrement) only if needed
+	* method to create obj relations directly
+	* shell dbadmin: driver detail
+	* #225 - configurable password validation rule via regexp
+
+
+Version 3.1.alpha - ulmus
+ User-visible changes:
+	* #234 - thumbnails error on category/tag
+	* #120 - external auth type services openid/shibboleth - user create/update
+	* $conf->extAuthTypes  options in form user admin
+	* added new icons
+	* card added in newletter list (comma separated email) created with status=on
+	* added association comment-attach
+	* fix <select> in subscription method (single opt-in, double opt-in)
+	* 'see also' relation links all 'related' object types
+	* fixing color on custom properties <select>
+	* version number in colophon
+	* list objects shows description and nickname
+	* custom property input text to textarea
+	* fix erroneous directory path for module inclusion
+	* added rich text editor in description translation for card objects
+	* plugin modules activation by UI (plug-in, turn on, turn off, plug-out)
+	* enable, disable addons through UI
+	* recover user password through hash
+	* added translations in multimedia/view
+	* #103 - objects versioning
+	* #84 - concurrent editors
+	* #230 - bulk operations on selected objects
+	* multimedia objects can be placed on the tree
+	* #70 - autosave
+	* object "fixed" property management added in form properties. Administration group users only
+	* object view: if section tree location is checked -> branch uncollappsed
+	* alias infos in object section detail
+	* new previews tab
+	* #240 UI improvement
+		- "nickname" editing moved to form_title_subtitle
+		- "previews" removed form "menuLeft" and moved to a Big gray Tab in form_previews
+		- added "nl2br" to editors notes
+		- description - HTML rich text con pochi bottoni
+		- save as draft button + draft object icon
+	* improved "continue" link on newsletter items
+	* #181 ui: alert su cambio pagina se oggetto modificato e non salvato
+	* #241
+		- sort field in object list: added class 'SortableUp' in be_toolbar
+		- added filter to count permissions
+		- highlight selected item
+		- objects with permission have specific icon
+		- tooltip in toolbar
+	* update statistics module
+	* admin module: plugins and addons skinning
+	* webmarks description w/html
+	* fix on append delete media on the tree in details view
+	* onchange_callback function added in the tiny_mce_default_ini.js
+	
+
+ Frontend changes:
+	* fixed error on staging_toolbar
+	* added FrontendController method to handle access denied
+	* added BeditaRuntimeException and handled in FrontendController
+	* #211 - ui: generic BEdita helper (handle meta tag, canonicalPath)
+	* fix many errors on canonicalPath
+	* redefine $checkPubDate as array to check start and end publication date separately
+	* added check publication date in search method
+	* load last comment inserted when an ajax call is performed
+	* frontend configurations (frontend.ini.php) loaded in backend bootsrap
+	* fix bug: when module status is off it was reachable by url
+	* added content_nicknameBeforeFilter($sectionNickname) and content_nicknameBeforeRender callbacks
+	* passed parameters $contentNickname (populated only if a content is requested) to section_nicknameBeforeFilter to easly know if a content is requested before finding result
+	* alias in staging tooolbar
+	* Add callback beforeCheckLogin in FrontendController to perform operations before checkLogin method is called (for example to skip check)
+	* download permitted also for attach related object
+	* signup frontend
+	* bugfix: choosing a translation language left main language fields populated if object translation fields are empty
+	* FrontendController::dowload check if multimedia is an attachment/dowload or on the tree
+	* #139 handle session expired when an ajax call is performed.
+
+ Developer-visibile changes:
+	* set session vars moved to a own method
+	* removed $allowKey in BeAuth component (not used)
+	* change validation rule in Group.name (alphanumeric => notEmpty)
+	* moved serialize/unserialize auth_params in User model beforeSave and afterFind
+	* robots.txt examples fix
+	* exclude some dirs for modelPath, controllerPath
+	* moved bedita sql files to bedita-app/config/sql
+	* first cake schema generated
+	* #113 - patch to cake core libs to support mysql 'enum' and 'set' column types
+	* #121 infrastructure to plug module like CakePHP plugins
+		- introduced bedita-app/libs to 1st party library
+		- remove object types from bedita.ini.php and put in configuration runtime reading cache or database
+		- added plugins/addons (dummy cakePHP plugin) to plug Model, Component, etc...
+		- frontend bootstrap include backend bootstrap
+		- move common templates from common_inc to elements
+		- moved </head> and <body> from every templates to default layout
+	* multiple recipients for mailSupport ("to"=>'addr1@example.com, addr2@example.com')
+	* #217 - sql upgrade scripts
+	* added BeditaObjectModel base class for BEdita objects that use objects table as base table
+	* added module shell script and module model to plug new plugin-module
+	* link specific css and js for models made by helper
+	* Module model extends BEAppModel
+	* fix User::afterFind
+	* fix build filter error with keyword rel_object_id
+	* #235 - added version to bedita export
+	* script shell import XML
+	* Tiny Mce: All characters will be stored in non-entity form except these XML default entities: &amp; &lt; &gt; &quot;
+	* objectType string instead of objectTypeId to get avaiable relations
+	* hash operation send an email html+txt if it's present boundary placeholder [[[-BOUNDARY--]]] on messages
+	* loaded cached configurations
+	* added BEDITA_PLUGINS_PATH constant to define special bedita plugins path
+	* sample plugin module
+	* shell: xml import update/fix
+	* shell: bedita init - now you can proceed on error anyway
+	* plugins: default 'addons' dir - test shell
+	* xml import shell moved to 'plugins'
+	* image model: methods to set with/height from file
+	* search text: index if no lang is set (use default language)
+	* refined updateStreamFields in Stream model and added relative shell script
+	* refactoring to use new Stream model methods
+	* add unique key on object_type.name
+	* added in Configure::helperPaths plugins/addons/helpers and BEDITA_PLUGIN_PATH/addons/helpers
+	* navigation history
+	* added Alias to hasMany associations and modify afterSave to delete hasMany associations row only if it's set $this->data["ModelName"]
+	* refactoring of hash hanlder
+	* Refactoring beforeFilter flow to use checkLogin method in frontend
+	* remove Msg helper, used $session->flash directly
+	* added ObjectProperty to BeditaSimpleStreamModel::$modelBindings["detailed"]
+	* added BeTimeHelper that extends CakePHP TimeHelper
+	* added shockwave type to Application
+	* set to null email field when it's empty to avoid DUPLICATE ENTRY error on saving user without email
+	* removed method getPassedArgs... use instead $this->params["named"]
+	* Application::__construct call parent::__construct
+	* shell: try catch to avoid interrupting the rebuildIndex
+	* external Auth types build on runtime looking at addons/components/be_auth_* files
+	* shell: #224 - import vcard and ms CSV files
+	* shell: skipped cache configuration if missing required tables
+	* shell: #238 - shell:dbadmin - checkConsistency
+	* handle user message through layout
+	* modify smarty.php view to improve compatibility with cakePHP View class behavior
+	* smarty: modify assign_associative smarty plugins to create always a new array
+	* smarty: added smarty plugins to add items to an array
+	* update tinymce to 3.3.4 version
+	* update to Jquery 1.4.2 and Jquery UI to 1.8rc3
+	* preview array changed. All objects url are shown and are diveded by publication
+	* #125 store procedure removed
+	* fix wrong extension in .JPG file thumb
+	* #126 removed views (view_trees, view_permissions)
+	* added plugin jquery for trigger messages
+	* smarty: smarty.agent update
+	* update to CakePHP 1.2.7
+	* rename 'referenceData' to 'checkConstraints'
+
+
+
+Version 3.0.1 - betula
+ User-visible changes:
+ 	* replace publishing with publication
+ 	* fixed wrong behavior on select country in addressbook (added jquery.selectboxes plugin)
+ 	* fix video thumbnails
+ 	* fix <select> in newsletter subscription method (single opt-in, double opt-in)
+
+ Frontend changes:
+ 	* fix including nickname.tpl(.ctp) view if exists and use views/pages instead of views/sections directory
+ 	* fix rss urls/links
+ 	* captcha generation bug solved (waiting for CakePHP to solve the srand bug ticket #140)
+ 	* fix canonicalPath
+
+ Developer-visibile changes:
+ 	* replacing deprecated videoThumbHeight with media.video.thumbHeight
+ 	* small shell fixes
+ 	* multiple recipients for mailSupport ("to"=>'addr1@example.com, addr2@example.com')
+ 	* fix build filter error with keyword rel_object_id
+
+
+
+Version 3.0 - betula
+
+ User-visible changes:
+ 	* #196 - print layout, standard BEdita report. Introduced print option for BEdita objects 
+ 	* #81 - upload files directly in download relation tab
+ 	* fix multimedia items drag&drop and sort in IE7
+ 	* complete UI english/italian localization
+ 	* fix upload from URL
+ 	* fix video thumbnails in newsletter messages
+ 	* automatic remove of time in flowplayer when player width is too small
+ 	* #221 - fixed number of subscribed in newsletter main page
+ 	* #98 - improved newsletter module interface
+ 	* addressbook: company name for a person
+ 	* categories in Documents module
+ 	* vimeo video: get thumbnail_medium instead of large
+ 	* newsletter email (html) send in correct format (with -alt-- and boundary code between plain text and html type)
+	* added link (continue) at the end of contents inserted in a newsletter message (if use template associated to a publication)
+	* added "reply to" field in template form
+	* default card status ON
+	* many fix in addressbook module
+	* fix ajax bug in operations on list subscribers
+	* newsletter: added [$abstract] and [$subscriber] placeholders. Truncate options on [$description] and [$abstract]
+	* bugfix - click on box "translations" back to translations module
+	* #228 ui:preserve list filter on bulk operations and single delete
+	* remove notes from mail group details
+	* fix upload file in Windows
+	
+ 
+ Frontend changes:
+ 	* beEmbedFlash helper include swfobject automaticaly from BEdita backend using BEDITA_CORE_PATH
+ 	* #222 - staging toolbar for every frontend
+ 	* restyled site.example.com (html and css) 
+ 	* comments: skip capthca and use users data for users logged in frontend
+ 	* custom properties array reformatted with label as key
+ 	* #132 many fix on sitemap (xml and html)
+ 	* #211 canonicalPath for helpers, and pages/templates
+ 	* fix urls -> use .canonicalPath
+ 	
+ 
+ Developer-visibile changes:
+ 	* php 5.3 support
+	* update cakephp to 1.2.5
+	* update to swfobject 2.2
+	* update to uploadify 2.1.0
+	* update to flowplayer to 3.1.4
+	* update webroot/index.php and core.php.sample in backend and frontends
+	* #196 - print layout, create a structure to build own frontend print layouts
+	* beEmbedFlash helper now support flowplayer playlists
+	* beEmbedFlash embed Flowplayer useing flowplayer.min.js instead of swfobject for IE7 problems
+	* introduced Alias model for create nickname aliases
+	* shell: dbadmin orphans, search and remove orphan objects (not in tree)
+	* fix unit tests
+	* #219 - fix delete of subsections when remove a section/publication
+	* Tree unit test
+	* #194 - delete wrong store procedure to clean tree. Cleaning tree on deleting object done through php code
+	* #220 - fixed error on bulk actions
+	* fixed clone card (added specific javascript)
+	* change enum options in mail_status field
+	* i18n update
+	* #224 - vcard import, shell script -- merge
+	* add AppHelper base class in backend and include it in frontends
+	* refactor for apidoc
+	* fix 'fixed' handling
+	* update comments on bedita.ini, bedita.sys, bedita.cfg
+	* refactoring of media_providers config array in bedita.ini
+	* deploy script and release.cfg fix
+	* workaround to avoid phpThum bug when use imagemagick and upscale=false
+	* added duration in blip and vimeo videos
+	* some changes on helpers video to use oEmbed format
+	* #206 - partial nickname alias handling -- load frontend and object save
+	* beEmbedFlash helper: option for embed flash object directly with html code (no javascript used)
+	* patched cakePHP EmailComponent on line 493 to create boundary when email sent in text and html (both mode) 
+	* shell newsletter: method to add cards to mail_group
+	* bugfix - delete multimedia item with no file associated
+	* added $fullBaseUrl attribute of AppController class. Used in forward methods
+	* newsletter-send: managed BeditaException in sendQueuedJobs and create jobs only for "ON" card
+	* shell script: dbadmin bulk import from csv
+	* shell newsletter: mail group lists merge
+	* mail jobs handled by process pid to allow sending newsletter messages with jobs unexpectedly terminated
+	* db schema: added UNSIGNED and INDEX at process_info on mail_jobs
+	
+
+
+Version 3.0.RC
+
+ User-visible changes:
+
+	* introduced editor notes (save/delete ajax)
+	* fixed "recent items" lists in dashboard (no comments/notes/other stuff)
+	* #195 - online help
+	* last notes/comments in dashboard
+	* localization updates, only english-italian languages
+	* admin: system events & system info in 2 pages
+	* admin/systemInfo - added jquery, smarty, tinyMCE version info, mysql host and database
+	* #205 - fix layout on IE7
+	* #202 - fixed IE7 & IE8 flash upload problem
+	* fixed multimedia list view
+	* #193 events: modified view (promoter/location)
+
+
+ Frontend changes:
+
+	* little changes on checKIsLogged and login method
+	* documented frontend.ini.php variables
+	* #135 - staging sites have authentication
+	* #122 newsletter: subscribe/unsubscribe from frontend
+	* fixed exceptions handling for contents not in current publication
+	* frontend: new dir structure, 2 frontends: debug.example.com, site.example.com
+	* frontend: nickname based complete paths - $section["path"] and $section["contentPath"]
+	* fixed parent filter on specific publishing 
+
+ Developer-visibile changes:
+
+	* fix some bugs using HtmlHelper::link
+	* update release.cfg.php.sample
+	* </head> and <body> default layout
+	* tag {bedev}{/bedev} to hide unimplemented features
+	* api docs - doxygen customization, variuos updates
+	* global <form> tags cleanup
+	* embed helper: flash, swf, flv
+	* #116 ajax upload: automatic fallback if flash plugin not available, link to switc to/from browser upload
+	* #198 multimedia: new model Application
+	* #101 - email notification
+	* bedita export without media files, -nomedia option 
+	* generic /vew method/url in backend
+	* #197 Application object management and getMediaTypeImage function improvements
+	* bedita shell: sync object_types table with bedita.ini (updateObjectTypes)
+	* $object["curr_lang"] contains current language if different from main "lang"
+	* update uploadify
+	* #185 fix import from phplist
+	* #203 fixed, addLink ajax method in pages_controller with all other ajax methods
+	* fixed bug uploading youtube video
+	* #204 new schema for object_users, free relations between users and objects
+	* fix diagnostics - error 404/500 details if 'debug' level >= 1
+	* fixed handlig of user_modified, user_created, ip_created in BEObject model
+	* comments: fixed notification msg, notification not sent if comment updated from backend
+	* links/URLs: fetch title automatically if not set - new link, Links tab, new multimedia obj via URL
+	* update to cakePHP 1.2.4.8284
+	* update to Smarty 2.6.26
+	* new table hash_jobs
+	* fix unit tests
+	* #196 print layout
+	* #209 - mail log for mail sent without jobs, added mail_jobs.smtp_err on mail job failure
+	* addressbook: various fixes
+	* update TinyMCE 3.2.6
+	* default audioplauer: flowplayer
+
+
+Version 3.0.beta2
+
+ User-visible changes:
+	* added newsletter module
+	* fix newsletter clone
+	* fix bug: comments could be deleted on object saving
+	* #183 - newsletter: controls/bugfix/enhancement
+	* dashboard: persistent tabs
+	* multimedia: enhanced swf flash embed 
+	* webmarks: images added
+	* fix bug: error saving date patterns different from "dd/mm/yyyy", locale pattern automatic set
+	* fix search in home
+	* dashboard: added warning/info/error messages
+	* i18n: translations update
+	* added thumbnail field in videos
+	* #157 miminal form for object permissions
+	* multimedia: default status ON for new items, fixed referenced objects list detail 
+
+ Frontend changes:
+	* #144 basic search on a single frontend
+	* fix bug calling /section/nicksection/nickcontent where content not in section => error 404
+	* added FrontendController::tag + "tag" reserved word
+	* saveComment: added /#error in returned url on error
+	* added logic to check authorized groups in frontend login
+	* methods saveObject, deleteObjects moved to AppController -> reused in FrontendController
+	* added FrontendController::$logoutRedirectTo, overridable in pages_controller
+	* #157 basic frontend permission on objects handling 
+
+ Developer-visible changes:
+	* cakephp updated to 1.2.3.8166
+	* added/updated api docs comments
+	* #169 - schema changes, user settings
+	* #169 - saving user preferences: language and notifications
+	* #101 - notify mail added
+	* #144 - changed search GET paramenter search => query
+	* added dateFormatValidation in setuplocale
+	* override cloneObject in controller, more object types
+	* bedita.ini config refactoring: status --> defaultStatus, removed: type, customPropTypeOptions, docTypeOptions
+	* #185 - newsletter: import from CSV/phplist
+	* refactoring media provider system, upload, added "vimeo" media provider
+	* fix and update on video thumbs
+	* Tree.priority and order in filtered conditions, avoding conflicts with categories and other fields
+	* #157 - obj permissions, removed PermissionComponent, removed permissions procedures, rewrite model Permission
+	* 2 permission types: frontent access, object write
+	* saveObject: check user "object write" permissions
+	* shell script refactoring - BeditaBaseShell
+
+Version 3.0.beta1
+
+ User-visible changes:
+	* #52: added section fields to map statistics url, statistics provider and code to add at the end of every page (visible in Publishing module)
+	* #83: improved preview feature
+	* #151: correct users logged info and added session information 
+	* #116: multiple upload (with jquery.uploadify)
+	* "short text" only presents in "documents" and in the contents with field "abstract" already filled
+	* #169: added minimal user preferences in homepage to change password and other (only change password, name and email work for now)
+	* many minor UI improvements 
+ 
+ Frontend changes:
+ 	* #132: automagic sitemap generation in both XML and views way by www.example.com/sitemap.xml and www.example.com/sitemap
+  	* #132: improved FrontendController::route to manage special cases (/sitemap, /download, /xml, /robots.txt....) without specific routing rules
+  	* manage /section/subsection/subsubsection frontend URL to show subsubsection
+  	* added FrontendController::loadAnnotations method to allow comments pagination
+  	* added FrontendController::json method to get json object (/json/nickname_object)
+  	* added FrontendController::loadPublications to get all publications of a BEdita instance
+  	
+ Developer-visible changes:
+ 	* upgrade to Cakephp 1.2.2.8120
+ 	* added cake.bat file to use shell scripts (convenient script to call Cakephp shell for Windows users)
+	* #167: new infrastructure to new note system. Missing UI
+	* #116 added mime type array (and shell script to generate it) used in upload files when PECL fileinfo extension isn't present	
+	* #164: publications extend sections. Infrastructure with dummy model for object that extends other object
+	* #171: split bedita.cfg.php in two files. bedita.sys.php containing specific server configuration and bedita.cfg.php containing specific BEdita instance configuration (like relationship between objects)
+	* files uploaded in two subdirectories level instead of four and add cache directory with thumbnail for any image type files
+	* other small bugfixes
+  
+
+
+Version 3.0.alpha1
+
+ User-visible changes:
+ 	* FIRST PUBLIC RELEASE - change details from next release
+
+  
+ Developer-visible changes:
+ 	* FIRST PUBLIC RELEASE - change details from next release
